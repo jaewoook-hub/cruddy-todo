@@ -11,6 +11,7 @@ var counter = 0;
 // Wikipedia entry on Leading Zeros and check out some of code links:
 // https://www.google.com/search?q=what+is+a+zero+padded+number%3F
 
+//"%05d" % 0.1 => "00000"
 const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
 };
@@ -38,9 +39,27 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (err, callback) => {
+  if (err) {
+    throw err;
+  } else {
+    readCounter((err, count) => {
+      if (err) {
+        throw err;
+      } else {
+        writeCounter(++count, (err, counterString) => {
+          if (err) { throw err; } else { callback(counterString); }
+        });
+      }
+    });
+  }
+
+  // return id;
+  // readCounter is asynchronous, while returning id is synchronous
+  // To deal with this, getNextUniqueId should take a callback as an arg
+  // (The callback would be writeFile for .create in index.js)
+  // And then the callback would be run last
+  // Like readCounter(...writeCounter(...callback(id)))
 };
 
 
