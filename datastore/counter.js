@@ -39,27 +39,12 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = (err, callback) => {
-  if (err) {
-    throw err;
-  } else {
-    readCounter((err, count) => {
-      if (err) {
-        throw err;
-      } else {
-        writeCounter(++count, (err, counterString) => {
-          if (err) { throw err; } else { callback(counterString); }
-        });
-      }
+exports.getNextUniqueId = (callback) => {
+  readCounter((err, count) => {
+    writeCounter(count + 1, (err, counterString) => {
+      callback(err, counterString);
     });
-  }
-
-  // return id;
-  // readCounter is asynchronous, while returning id is synchronous
-  // To deal with this, getNextUniqueId should take a callback as an arg
-  // (The callback would be writeFile for .create in index.js)
-  // And then the callback would be run last
-  // Like readCounter(...writeCounter(...callback(id)))
+  });
 };
 
 
